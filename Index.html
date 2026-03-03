@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saree Shop Business System</title>
+
+<style>
+body { font-family: Arial; background:#f2f4f7; margin:0; padding:10px; }
+h1 { text-align:center; }
+
+.nav {
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+    margin-bottom:15px;
+}
+
+.nav button {
+    flex:1;
+    padding:10px;
+    background:#1f3c88;
+    color:white;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.section { display:none; }
+
+.card {
+    background:white;
+    padding:15px;
+    margin-bottom:15px;
+    border-radius:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+
+input, select, button {
+    width:100%;
+    padding:8px;
+    margin:5px 0;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+table {
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+}
+
+th, td {
+    border:1px solid #ddd;
+    padding:6px;
+    text-align:center;
+}
+
+th { background:#f0f0f0; }
+
+.delete-btn { background:#c0392b; color:white; border:none; }
+
+.positive { color:green; font-weight:bold; }
+.negative { color:red; font-weight:bold; }
+
+.summary-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fit,minmax(140px,1fr));
+    gap:8px;
+}
+.summary-box {
+    background:#eef2f7;
+    padding:10px;
+    border-radius:8px;
+    text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Saree Shop Management</h1>
+
+<div class="nav">
+<button onclick="showSection('dashboard')">Dashboard</button>
+<button onclick="showSection('cash')">Daily Cash</button>
+<button onclick="showSection('party')">Party Ledger</button>
+<button onclick="showSection('labour')">Labour</button>
+</div>
+
+<!-- ================= DASHBOARD ================= -->
+<div id="dashboard" class="section">
+
+<div class="card">
+<h3>Business Summary</h3>
+<div class="summary-grid">
+<div class="summary-box"><h4>Total Sales</h4><p id="d_totalSales">0</p></div>
+<div class="summary-box"><h4>Total Cash</h4><p id="d_totalCash">0</p></div>
+<div class="summary-box"><h4>Total PhonePe</h4><p id="d_totalPP">0</p></div>
+<div class="summary-box"><h4>Total Expenses</h4><p id="d_totalExp">0</p></div>
+<div class="summary-box"><h4>Total Party Pending</h4><p id="d_partyPending">0</p></div>
+<div class="summary-box"><h4>Total Salary Pending</h4><p id="d_salaryPending">0</p></div>
+</div>
+</div>
+
+</div>
+
+<!-- ================= DAILY CASH ================= -->
+<div id="cash" class="section">
+
+<div class="card">
+<h3>Daily Entry</h3>
+<input type="date" id="c_date">
+<input type="number" id="c_cash" placeholder="Cash Sales">
+<input type="number" id="c_pp" placeholder="PhonePe Sales">
+<input type="number" id="c_exp" placeholder="Expenses">
+<input type="number" id="c_party" placeholder="Cash Paid To Party">
+<input type="number" id="c_close" placeholder="Closing Cash">
+<button onclick="addCash()">Save</button>
+</div>
+
+<div class="card">
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Cash</th>
+<th>PP</th>
+<th>Total</th>
+<th>Exp</th>
+<th>Expected</th>
+<th>Close</th>
+<th>Diff</th>
+<th>Delete</th>
+</tr>
+</thead>
+<tbody id="cashTable"></tbody>
+</table>
+</div>
+
+</div>
+
+<!-- ================= PARTY ================= -->
+<div id="party" class="section">
+
+<div class="card">
+<h3>Add Party</h3>
+<input id="p_name" placeholder="Party Name">
+<button onclick="addParty()">Add</button>
+</div>
+
+<div class="card">
+<h3>Add Transaction</h3>
+<select id="p_select"></select>
+<input type="date" id="p_date">
+<input type="number" id="p_purchase" placeholder="Purchase">
+<input type="number" id="p_payment" placeholder="Payment">
+<button onclick="addPartyTxn()">Save</button>
+</div>
+
+<div class="card">
+<table>
+<thead>
+<tr>
+<th>Party</th>
+<th>Purchase</th>
+<th>Paid</th>
+<th>Pending</th>
+</tr>
+</thead>
+<tbody id="partyTable"></tbody>
+</table>
+</div>
+
+</div>
+
+<!-- ================= LABOUR ================= -->
+<div id="labour" class="section">
+
+<div class="card">
+<h3>Add Labour</h3>
+<input id="l_name" placeholder="Name">
+<input type="number" id="l_salary" placeholder="Weekly Salary">
+<button onclick="addLabour()">Add</button>
+</div>
+
+<div class="card">
+<h3>Attendance</h3>
+<select id="l_select"></select>
+<input type="date" id="l_date">
+<select id="l_status">
+<option value="Present">Present</option>
+<option value="Absent">Absent</option>
+</select>
+<button onclick="addAttendance()">Save</button>
+</div>
+
+<div class="card">
+<h3>Salary Payment</h3>
+<select id="l_pay_select"></select>
+<input type="number" id="l_pay_amount" placeholder="Amount Paid">
+<button onclick="paySalary()">Pay</button>
+</div>
+
+<div class="card">
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Earned</th>
+<th>Paid</th>
+<th>Pending</th>
+</tr>
+</thead>
+<tbody id="labourTable"></tbody>
+</table>
+</div>
+
+</div>
+
+<script>
+
+function showSection(id){
+    document.querySelectorAll(".section").forEach(s=>s.style.display="none");
+    document.getElementById(id).style.display="block";
+}
+
+showSection("dashboard");
+
+function format(n){ return "Rs. "+Number(n).toLocaleString("en-IN"); }
+
+let cashData = JSON.parse(localStorage.getItem("cash")) || [];
+let parties = JSON.parse(localStorage.getItem("party")) || [];
+let labours = JSON.parse(localStorage.getItem("labour")) || [];
+
+/* ================= CASH ================= */
+
+function addCash(){
+    let date=c_date.value;
+    if(!date) return alert("Select date");
+    let cash=+c_cash.value||0;
+    let pp=+c_pp.value||0;
+    let exp=+c_exp.value||0;
+    let party=+c_party.value||0;
+    let close=+c_close.value||0;
+
+    let total=cash+pp;
+    let expected=cash-exp-party;
+    let diff=close-expected;
+
+    cashData.push({date,cash,pp,total,exp,expected,close,diff});
+    localStorage.setItem("cash",JSON.stringify(cashData));
+    renderCash();
+    renderDashboard();
+}
+
+function renderCash(){
+    cashTable.innerHTML="";
+    cashData.forEach((r,i)=>{
+        let cls=r.diff>=0?"positive":"negative";
+        cashTable.innerHTML+=`
+        <tr>
+        <td>${r.date}</td>
+        <td>${format(r.cash)}</td>
+        <td>${format(r.pp)}</td>
+        <td>${format(r.total)}</td>
+        <td>${format(r.exp)}</td>
+        <td>${format(r.expected)}</td>
+        <td>${format(r.close)}</td>
+        <td class="${cls}">${format(r.diff)}</td>
+        <td><button class="delete-btn" onclick="delCash(${i})">X</button></td>
+        </tr>`;
+    });
+}
+
+function delCash(i){
+    cashData.splice(i,1);
+    localStorage.setItem("cash",JSON.stringify(cashData));
+    renderCash(); renderDashboard();
+}
+
+/* ================= PARTY ================= */
+
+function addParty(){
+    if(!p_name.value) return;
+    parties.push({name:p_name.value,tx:[]});
+    localStorage.setItem("party",JSON.stringify(parties));
+    p_name.value="";
+    renderParty();
+}
+
+function addPartyTxn(){
+    let i=p_select.value;
+    if(i==="") return;
+    let purchase=+p_purchase.value||0;
+    let payment=+p_payment.value||0;
+    parties[i].tx.push({purchase,payment});
+    localStorage.setItem("party",JSON.stringify(parties));
+    renderParty();
+}
+
+function renderParty(){
+    p_select.innerHTML="";
+    partyTable.innerHTML="";
+    parties.forEach((p,i)=>{
+        p_select.innerHTML+=`<option value="${i}">${p.name}</option>`;
+        let totP=0,totPaid=0;
+        p.tx.forEach(t=>{totP+=t.purchase; totPaid+=t.payment;});
+        let pending=totP-totPaid;
+        partyTable.innerHTML+=`
+        <tr>
+        <td>${p.name}</td>
+        <td>${format(totP)}</td>
+        <td>${format(totPaid)}</td>
+        <td class="negative">${format(pending)}</td>
+        </tr>`;
+    });
+    renderDashboard();
+}
+
+/* ================= LABOUR ================= */
+
+function addLabour(){
+    if(!l_name.value) return;
+    labours.push({name:l_name.value,salary:+l_salary.value,att:[],paid:0});
+    localStorage.setItem("labour",JSON.stringify(labours));
+    renderLabour();
+}
+
+function addAttendance(){
+    let i=l_select.value;
+    if(i==="") return;
+    labours[i].att.push(l_status.value);
+    localStorage.setItem("labour",JSON.stringify(labours));
+    renderLabour();
+}
+
+function paySalary(){
+    let i=l_pay_select.value;
+    if(i==="") return;
+    labours[i].paid+=+l_pay_amount.value||0;
+    localStorage.setItem("labour",JSON.stringify(labours));
+    renderLabour();
+}
+
+function renderLabour(){
+    l_select.innerHTML="";
+    l_pay_select.innerHTML="";
+    labourTable.innerHTML="";
+    labours.forEach((l,i)=>{
+        l_select.innerHTML+=`<option value="${i}">${l.name}</option>`;
+        l_pay_select.innerHTML+=`<option value="${i}">${l.name}</option>`;
+        let earned=(l.salary/7)*l.att.filter(a=>a=="Present").length;
+        let pending=earned-l.paid;
+        labourTable.innerHTML+=`
+        <tr>
+        <td>${l.name}</td>
+        <td>${format(earned)}</td>
+        <td>${format(l.paid)}</td>
+        <td class="negative">${format(pending)}</td>
+        </tr>`;
+    });
+    renderDashboard();
+}
+
+/* ================= DASHBOARD ================= */
+
+function renderDashboard(){
+    let ts=0,tc=0,tpp=0,tex=0,tpPending=0,tsPending=0;
+
+    cashData.forEach(r=>{
+        ts+=r.total;
+        tc+=r.cash;
+        tpp+=r.pp;
+        tex+=r.exp;
+    });
+
+    parties.forEach(p=>{
+        let totP=0,totPaid=0;
+        p.tx.forEach(t=>{totP+=t.purchase; totPaid+=t.payment;});
+        tpPending+=totP-totPaid;
+    });
+
+    labours.forEach(l=>{
+        let earned=(l.salary/7)*l.att.filter(a=>a=="Present").length;
+        tsPending+=earned-l.paid;
+    });
+
+    d_totalSales.innerText=format(ts);
+    d_totalCash.innerText=format(tc);
+    d_totalPP.innerText=format(tpp);
+    d_totalExp.innerText=format(tex);
+    d_partyPending.innerText=format(tpPending);
+    d_salaryPending.innerText=format(tsPending);
+}
+
+renderCash();
+renderParty();
+renderLabour();
+renderDashboard();
+
+</script>
+
+</body>
+</html>
